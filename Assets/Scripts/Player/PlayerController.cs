@@ -2,6 +2,8 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Collections.Specialized;
 using UnityEngine;
+using UnityEngine.UI;
+using TMPro;
 
 public class PlayerController : MonoBehaviour
 {
@@ -10,8 +12,12 @@ public class PlayerController : MonoBehaviour
     [SerializeField] float jumpHeight;
     [SerializeField] float attackRadius;
     [SerializeField] float rotateToEnemyRadius;
+    [SerializeField] float pickUpItemRadius;
     [SerializeField] Transform attackPoint;
     [SerializeField] LayerMask enemyLayer;
+    [SerializeField] LayerMask pickupsLayer;
+
+    [SerializeField] GameObject pickUpItemUIElement;
 
     [SerializeField] float attackDamage = 15;
 
@@ -24,8 +30,9 @@ public class PlayerController : MonoBehaviour
     Animator animator;
     readonly string IS_WALKING = "isWalking";
     readonly string ATTACK = "attack";
+    readonly string SPIN_ATTACK = "spinAttack";
 
-
+    float originalMovementSpeed;
 
     // Rigidbody
     Rigidbody rb;
@@ -41,9 +48,12 @@ public class PlayerController : MonoBehaviour
     [SerializeField] float turnSmoothTimeForAttack = 0.025f;
     [SerializeField] float gravityVal = Physics.gravity.y; // default value: -9.81
     [SerializeField] float onGroundRadius = 0.4f;
-    bool isMoving;
+
     bool isOnGround;
     float turnSmoothVelocity;
+
+    PlayerSaveProfile playerSaveProfile;
+    
 
     private void OnDrawGizmosSelected()
     {
@@ -51,17 +61,24 @@ public class PlayerController : MonoBehaviour
         Gizmos.DrawWireSphere(attackPoint.position, attackRadius);
         Gizmos.color = Color.blue;
         Gizmos.DrawWireSphere(transform.position, rotateToEnemyRadius);
+        Gizmos.color = Color.green;
+        Gizmos.DrawWireSphere(transform.position, pickUpItemRadius);
     }
 
     // Start is called before the first frame update
     void Start()
     {
+        if (playerSaveProfile == null) playerSaveProfile = new PlayerSaveProfile();
+
+        pickUpItemUIElement.SetActive(false);
+
+        originalMovementSpeed = movementSpeed;
+
         //rb = GetComponent<Rigidbody>();
         controller = GetComponent<CharacterController>();
         capsuleCollider = GetComponent<CapsuleCollider>();
         animator = GetComponent<Animator>();
         Cursor.lockState = CursorLockMode.Locked;
-        isMoving = false;
         charControlVelocity.y = -2;
 
         if (!cameraPos)
@@ -73,6 +90,7 @@ public class PlayerController : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
+        
         if (useRigidbodyMovement) 
         {
             //if (controller) Destroy(controller);   
@@ -87,6 +105,8 @@ public class PlayerController : MonoBehaviour
         }
         HandleAttacking();
         ToggleCursorLock();
+        ManageItemPickups();
+
     }
 
 
@@ -163,11 +183,12 @@ public class PlayerController : MonoBehaviour
 
     void HandleAttacking()
     {
-        if (!isAttacking && Input.GetButtonDown("Fire1"))
+        if (!isAttacking)
         {
-            animator.SetTrigger(ATTACK);
+            if (Input.GetButtonDown("Fire1")) animator.SetTrigger(ATTACK);
+            else if (Input.GetButtonDown("Fire2")) animator.SetTrigger(SPIN_ATTACK);
         }
-        else if (isAttacking)
+        else
         {
             LookAtEnemy();
         }
@@ -184,6 +205,37 @@ public class PlayerController : MonoBehaviour
                 enemy.GetComponent<Health>().TakeDamage(attackDamage);
             }
         }
+    }
+
+    void SpinAttack(int dmgToDeal) // animation event
+    {
+        Collider[] enemiesHit = Physics.OverlapSphere(attackPoint.position, attackRadius, enemyLayer);
+        if (enemiesHit.Length > 0)
+        {
+            foreach (var enemy in enemiesHit)
+            {
+                //Debug.Log("Hit " + enemy.name);
+                enemy.GetComponent<Health>().TakeDamage(dmgToDeal);
+            }
+        }
+    }
+
+    void ManageItemPickups()
+    {
+        Collider[] pickupsInRange = Physics.OverlapSphere(transform.position, pickUpItemRadius, pickupsLayer);
+        if (pickupsInRange.Length > 0)
+        {
+            pickUpItemUIElement.SetActive(true);
+
+            if (Input.GetKeyDown(KeyCode.E))
+            {
+                foreach (var item in pickupsInRange)
+                {
+                    item.GetComponent<PickableItem>().PickUpItem();
+                }
+            }
+        }
+        else pickUpItemUIElement.SetActive(false);
     }
 
     void LookAtEnemy()
@@ -241,5 +293,43 @@ public class PlayerController : MonoBehaviour
                 Cursor.lockState = CursorLockMode.Locked;
             }
         }
+    }
+
+    void SetMovementSpeedMultiplier(float mp) // animation event
+    {
+        movementSpeed *= mp;
+    }
+    void ResetMovementSpeed() // animation event
+    {
+        movementSpeed = originalMovementSpeed;
+    }
+
+    public PlayerSaveProfile SavePlayer()
+    {
+
+        playerSaveProfile.currentHealth = GetComponent<Health>().GetHealth();
+        playerSaveProfile.currentPositionX = gameObject.transform.position.x;
+        playerSaveProfile.currentPositionY = gameObject.transform.position.y;
+        playerSaveProfile.currentPositionZ = gameObject.transform.position.z;
+
+        //Debug.Log(playerSaveProfile.currentPositionX);
+        //Debug.Log(playerSaveProfile.currentPositionY);
+        //Debug.Log(playerSaveProfile.currentPositionZ);
+
+        return playerSaveProfile;
+
+    }
+
+    public void LoadPlayer(SaveData saveData)
+    {
+        playerSaveProfile = saveData.playerSaveProfile;
+
+        transform.position = new Vector3(playerSaveProfile.currentPositionX, playerSaveProfile.currentPositionY, playerSaveProfile.currentPositionZ);
+
+        //Debug.Log(playerSaveProfile.currentPositionX);
+        //Debug.Log(playerSaveProfile.currentPositionY);
+        //Debug.Log(playerSaveProfile.currentPositionZ);
+
+        GetComponent<Health>().SetHealth(playerSaveProfile.currentHealth);
     }
 }

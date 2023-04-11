@@ -265,7 +265,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_text: TO BE CONTINUED...
+  m_text: Region 1 completed!
   m_isRightToLeft: 0
   m_fontAsset: {fileID: 11400000, guid: 8a4989f8b84ee284b9fc0e9187fb3548, type: 2}
   m_sharedMaterial: {fileID: -3121896428136640607, guid: 8a4989f8b84ee284b9fc0e9187fb3548, type: 2}
@@ -494,7 +494,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_text: MORE COMING IN THE FUTURE!
+  m_text: Region 2 unlocked!
   m_isRightToLeft: 0
   m_fontAsset: {fileID: 11400000, guid: 8a4989f8b84ee284b9fc0e9187fb3548, type: 2}
   m_sharedMaterial: {fileID: -3121896428136640607, guid: 8a4989f8b84ee284b9fc0e9187fb3548, type: 2}
@@ -521,8 +521,8 @@ MonoBehaviour:
   m_faceColor:
     serializedVersion: 2
     rgba: 4294967295
-  m_fontSize: 35
-  m_fontSizeBase: 35
+  m_fontSize: 40
+  m_fontSizeBase: 40
   m_fontWeight: 400
   m_enableAutoSizing: 0
   m_fontSizeMin: 18
@@ -660,6 +660,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   isOnEndScreen: 1
+  loadMenu: 0
+  loadStage3: 1
   clip: {fileID: 8300000, guid: 83c9f4f6a02ea744b8ffe41044acf4f2, type: 3}
 --- !u!1 &1303658180
 GameObject:
@@ -966,7 +968,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_text: RETURNING TO MENU
+  m_text: Loading Stage 3...
   m_isRightToLeft: 0
   m_fontAsset: {fileID: 11400000, guid: 8a4989f8b84ee284b9fc0e9187fb3548, type: 2}
   m_sharedMaterial: {fileID: -3121896428136640607, guid: 8a4989f8b84ee284b9fc0e9187fb3548, type: 2}

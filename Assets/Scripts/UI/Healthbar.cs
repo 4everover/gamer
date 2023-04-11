@@ -2,10 +2,12 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
+using TMPro;
 
 public class Healthbar : MonoBehaviour
 {
     Slider slider;
+    [SerializeField] TMP_Text healthText;
     [SerializeField] GameObject fillArea;
     [SerializeField] Color hpColor; // 30903F
     [SerializeField] Color hpLowColor; // B45045
@@ -19,15 +21,19 @@ public class Healthbar : MonoBehaviour
     {
         slider = GetComponent<Slider>();
         playerHealth = FindObjectOfType<PlayerController>().GetComponent<Health>();
-        playerMaxHP = playerHealth.GetHealth();
+        playerMaxHP = playerHealth.GetMaxHealth();
         slider.maxValue = playerMaxHP;
         slider.value = playerHealth.GetHealth();
+        healthText.text = "HP: " + playerHealth.GetHealth() + "/" + playerHealth.GetMaxHealth();
     }
 
     // Update is called once per frame
     void Update()
     {
         slider.value = playerHealth.GetHealth();
+        slider.maxValue = playerHealth.GetMaxHealth();
+        healthText.text = "HP: " + playerHealth.GetHealth() + "/" + playerHealth.GetMaxHealth();
+
         if (slider.value <= slider.maxValue * hpPercentToBeLow)
         {
             fillArea.GetComponent<Image>().color = new Color(hpLowColor.r, hpLowColor.g, hpLowColor.b); ;

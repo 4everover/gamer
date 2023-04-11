@@ -41,20 +41,22 @@ public class DeathOrPauseCanvas : MonoBehaviour
 
     public void PauseGame() 
     {
-        Time.timeScale = 0;
+        if (FindObjectOfType<InventoryCanvas>()) FindObjectOfType<InventoryCanvas>().HideInventory();
         pauseScreen.SetActive(true);
+        Time.timeScale = 0;
         Cursor.lockState = CursorLockMode.None;
     }
     public void UnpauseGame() 
     {
-        Time.timeScale = 1;
         pauseScreen.SetActive(false);
+        Time.timeScale = 1;
         Cursor.lockState = CursorLockMode.Locked;
     }
     public void EnableDeathScreen() 
     {
-        Time.timeScale = 0;
+        if (FindObjectOfType<InventoryCanvas>()) FindObjectOfType<InventoryCanvas>().HideInventory();
         deathScreen.SetActive(true);
+        Time.timeScale = 0;
         Destroy(dialogueCanvas);
         Cursor.lockState = CursorLockMode.None;
         AudioSource.PlayClipAtPoint(playerAudio.GetDieSound(), Camera.main.transform.position);

@@ -43,7 +43,7 @@ public class RabbitBossController : MonoBehaviour
 
         if (IsPlayerInRange())
         {
-            FindObjectOfType<GameAudioManager>().playBattleMusic();
+            //FindObjectOfType<GameAudioManager>().playBattleMusic();
 
             isAggravated = true;
             if (canRotate) { FacePlayer(); }

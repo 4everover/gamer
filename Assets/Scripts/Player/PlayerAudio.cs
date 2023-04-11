@@ -6,6 +6,7 @@ public class PlayerAudio : MonoBehaviour
 {
     AudioSource audioSource;
     [SerializeField] AudioClip attackSound;
+    [SerializeField] AudioClip spinAttackSound;
     [SerializeField] AudioClip getHitSound;
     [SerializeField] AudioClip dieSound;
 
@@ -24,6 +25,11 @@ public class PlayerAudio : MonoBehaviour
     public void PlayAttackSound()
     {
         audioSource.clip = attackSound;
+        audioSource.Play();
+    }
+    public void PlaySpinAttackSound()
+    {
+        audioSource.clip = spinAttackSound;
         audioSource.Play();
     }
     public void PlayGetHitSound()

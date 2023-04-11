@@ -8,10 +8,10 @@ public class Health : MonoBehaviour
     Animator animator;
 
     [SerializeField] float health = 50;
+    [SerializeField] float maxHealth = 50;
     [SerializeField] SkinnedMeshRenderer skinnedMeshRenderer;
     [SerializeField] Material[] gotHitMaterials;
 
-    float initialHealth;
     Material[] initialMaterials;
 
 
@@ -22,7 +22,7 @@ public class Health : MonoBehaviour
         else if (GetComponent<RabbitController>()) { entityScript = GetComponent<RabbitController>(); }
         else if (GetComponent<RabbitBossController>()) { entityScript = GetComponent<RabbitBossController>(); }
         animator = GetComponent<Animator>();
-        initialHealth = health;
+
         initialMaterials = skinnedMeshRenderer.materials;
     }
 
@@ -53,6 +53,12 @@ public class Health : MonoBehaviour
         }
     }
 
+    public void Heal(float healAmount)
+    {
+        health += healAmount;
+        if (health > maxHealth) { health = maxHealth; }
+    }
+
     IEnumerator FlashFromHit()
     {
         skinnedMeshRenderer.materials = gotHitMaterials;
@@ -62,7 +68,7 @@ public class Health : MonoBehaviour
 
     public void ResetHealth()
     {
-        health = initialHealth;
+        health = maxHealth;
     }
 
     public bool IsDead()
@@ -80,6 +86,16 @@ public class Health : MonoBehaviour
     public float GetHealth()
     {
         return health;
+    }
+
+    public void SetHealth(float h)
+    {
+        health = h;
+    }
+
+    public float GetMaxHealth()
+    {
+        return maxHealth;
     }
 
     IEnumerator InitiateDeathSequence()

@@ -24,6 +24,9 @@ public class RabbitController : MonoBehaviour
 
     float distanceBetweenPlayerAndRabbit;
 
+    RabbitSaveProfile rabbitSaveProfile;
+    
+
     private void OnDrawGizmosSelected()
     {
         Gizmos.color = Color.blue;
@@ -33,6 +36,8 @@ public class RabbitController : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
+        if (rabbitSaveProfile == null) rabbitSaveProfile = new RabbitSaveProfile();
+
         agent = GetComponent<NavMeshAgent>();
         rabbitBody = GetComponent<Rigidbody>();
         rabbitCollider = GetComponent<CapsuleCollider>();
@@ -45,6 +50,8 @@ public class RabbitController : MonoBehaviour
     // Update is called once per frame
     void FixedUpdate()
     {
+        
+
         if (player) { distanceBetweenPlayerAndRabbit = Mathf.Abs(Vector3.Distance(transform.position, player.transform.position)); }
 
         if (IsPlayerInRange())
